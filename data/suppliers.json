@@ -1,0 +1,95 @@
+{
+  "suppliers": [
+    {
+      "supplier_id": "SUP-001",
+      "name": "Pacific Micro SemiCorp",
+      "location": "Taiwan",
+      "supported_skus": ["MCU-STM32-H7"],
+      "reliability_score": 0.94,
+      "standard_lead_time_days": 5,
+      "base_unit_cost": 18.50,
+      "freight_options": {
+        "ocean_standard": {"lead_time_days": 18, "freight_cost_per_unit": 0.80},
+        "air_express": {"lead_time_days": 4, "freight_cost_per_unit": 4.50}
+      }
+    },
+    {
+      "supplier_id": "SUP-002",
+      "name": "VoltTech Energy Ltd",
+      "location": "South Korea",
+      "supported_skus": ["BATT-LI-5000"],
+      "reliability_score": 0.91,
+      "standard_lead_time_days": 6,
+      "base_unit_cost": 12.00,
+      "freight_options": {
+        "ocean_standard": {"lead_time_days": 15, "freight_cost_per_unit": 0.50},
+        "air_express": {"lead_time_days": 3, "freight_cost_per_unit": 3.00}
+      }
+    },
+    {
+      "supplier_id": "SUP-ALT-01",
+      "name": "EuroSilicon Direct",
+      "location": "Germany",
+      "supported_skus": ["MCU-STM32-H7"],
+      "reliability_score": 0.97,
+      "standard_lead_time_days": 3,
+      "base_unit_cost": 21.00,
+      "freight_options": {
+        "standard_ground": {"lead_time_days": 7, "freight_cost_per_unit": 1.50},
+        "air_priority": {"lead_time_days": 2, "freight_cost_per_unit": 6.20}
+      }
+    },
+    {
+      "supplier_id": "SUP-ALT-02",
+      "name": "Apex Semiconductor Depot",
+      "location": "USA (Domestic Hub)",
+      "supported_skus": ["MCU-STM32-H7"],
+      "reliability_score": 0.96,
+      "standard_lead_time_days": 2,
+      "base_unit_cost": 22.50,
+      "freight_options": {
+        "express_overnight": {"lead_time_days": 1, "freight_cost_per_unit": 7.00},
+        "standard_ground": {"lead_time_days": 4, "freight_cost_per_unit": 2.00}
+      }
+    },
+    {
+      "supplier_id": "SUP-ALT-03",
+      "name": "Shenzhen PowerCell Co.",
+      "location": "China",
+      "supported_skus": ["BATT-LI-5000"],
+      "reliability_score": 0.88,
+      "standard_lead_time_days": 8,
+      "base_unit_cost": 11.20,
+      "freight_options": {
+        "air_express": {"lead_time_days": 4, "freight_cost_per_unit": 2.80},
+        "ocean_freight": {"lead_time_days": 16, "freight_cost_per_unit": 0.40}
+      }
+    },
+    {
+      "supplier_id": "SUP-004",
+      "name": "OptiView Technologies",
+      "location": "Japan",
+      "supported_skus": ["SEN-OPT-4K"],
+      "reliability_score": 0.98,
+      "standard_lead_time_days": 4,
+      "base_unit_cost": 27.50,
+      "freight_options": {
+        "air_express": {"lead_time_days": 3, "freight_cost_per_unit": 5.00},
+        "ocean_freight": {"lead_time_days": 14, "freight_cost_per_unit": 1.20}
+      }
+    },
+    {
+      "supplier_id": "SUP-ALT-04",
+      "name": "Nordic Photonics Group",
+      "location": "Sweden",
+      "supported_skus": ["SEN-OPT-4K"],
+      "reliability_score": 0.93,
+      "standard_lead_time_days": 3,
+      "base_unit_cost": 29.00,
+      "freight_options": {
+        "air_priority": {"lead_time_days": 2, "freight_cost_per_unit": 6.50},
+        "standard_air": {"lead_time_days": 5, "freight_cost_per_unit": 3.00}
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "sku": "MCU-STM32-H7",
+      "name": "STM32 High-Perf Microcontroller",
+      "category": "Semiconductors",
+      "current_stock": 420,
+      "daily_demand": 60,
+      "safety_stock": 100,
+      "standard_unit_cost": 18.50,
+      "primary_supplier_id": "SUP-001",
+      "incoming_po": {
+        "po_number": "PO-9041",
+        "units": 800,
+        "scheduled_arrival_days": 5,
+        "status": "In Transit"
+      }
+    },
+    {
+      "sku": "BATT-LI-5000",
+      "name": "5000mAh Industrial Lithium Cell",
+      "category": "Energy Storage",
+      "current_stock": 750,
+      "daily_demand": 80,
+      "safety_stock": 200,
+      "standard_unit_cost": 12.00,
+      "primary_supplier_id": "SUP-002",
+      "incoming_po": {
+        "po_number": "PO-8820",
+        "units": 1200,
+        "scheduled_arrival_days": 6,
+        "status": "In Transit"
+      }
+    },
+    {
+      "sku": "SEN-OPT-4K",
+      "name": "High-Res CMOS Optical Sensor",
+      "category": "Optoelectronics",
+      "current_stock": 310,
+      "daily_demand": 45,
+      "safety_stock": 90,
+      "standard_unit_cost": 27.50,
+      "primary_supplier_id": "SUP-004",
+      "incoming_po": {
+        "po_number": "PO-9133",
+        "units": 500,
+        "scheduled_arrival_days": 4,
+        "status": "In Transit"
+      }
+    }
+  ]
+}
