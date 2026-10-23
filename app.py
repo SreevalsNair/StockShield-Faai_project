@@ -48,14 +48,38 @@ st.markdown("""
         margin-top: 1rem;
         margin-bottom: 1rem;
     }
-    .vendor-badge {
-        display: inline-block;
-        padding: 0.25rem 0.6rem;
-        background-color: #E0F2FE;
-        color: #0369A1;
-        border-radius: 4px;
-        font-weight: 600;
-        font-size: 0.85rem;
+    .arch-container {
+        background-color: #0F172A;
+        border-radius: 12px;
+        padding: 24px;
+        color: #F8FAFC;
+        border: 1px solid #334155;
+    }
+    .arch-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1.2fr 1fr;
+        gap: 16px;
+        margin-top: 16px;
+    }
+    .arch-card {
+        background-color: #1E293B;
+        border-radius: 8px;
+        padding: 16px;
+        border: 1px solid #475569;
+    }
+    .arch-card h4 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 1rem;
+    }
+    .arch-card p, .arch-card li {
+        font-size: 0.82rem;
+        color: #CBD5E1;
+        line-height: 1.35;
+    }
+    .arch-card ul {
+        margin-left: 16px;
+        margin-bottom: 0;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -172,10 +196,11 @@ else:
     sim_result = st.session_state["sim_result"]
 
 # ----------------- DASHBOARD LAYOUT -----------------
-tab1, tab2, tab3 = st.tabs([
+tab1, tab2, tab3, tab4 = st.tabs([
     "🤖 Multi-Agent Execution Trace", 
     "📈 Inventory Trajectory Chart", 
-    "📦 Final Purchase Order & Vendor Details"
+    "📦 Final Purchase Order & Vendor Details",
+    "🏛️ System Architecture Diagram"
 ])
 
 with tab1:
@@ -445,3 +470,57 @@ with tab3:
         )
     else:
         st.success("No emergency replenishment needed. Stock Runway covers standard arrival.")
+
+with tab4:
+    st.markdown("### **System Architecture & Information Pipeline (Landscape View)**")
+    st.caption("End-to-end data flow from disruption sensors to multi-agent negotiation and PO generation:")
+    
+    st.markdown("""
+    <div class="arch-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 12px;">
+            <h3 style="color: #38BDF8; margin: 0;">StockShield Multi-Agent Architecture</h3>
+            <span style="background: #0369A1; color: #E0F2FE; padding: 4px 10px; border-radius: 99px; font-size: 0.8rem; font-weight: 700;">ORCHESTRATOR PIPELINE</span>
+        </div>
+        <div class="arch-grid">
+            <!-- 1. Triggers -->
+            <div class="arch-card" style="border-left: 4px solid #F59E0B;">
+                <h4 style="color: #FBBF24;">1. Disruption Sensors</h4>
+                <p><strong>Primary PO Delayed:</strong> +11 days (ETA pushed from Day 5 to Day 16)</p>
+                <p><strong>Demand Surge:</strong> +15% (Burn rate: 60 to 69 units/day)</p>
+                <p><strong>Policy Constraints:</strong> Max $14,500 emergency budget cap</p>
+            </div>
+            <!-- 2. Data Stores -->
+            <div class="arch-card" style="border-left: 4px solid #64748B;">
+                <h4 style="color: #94A3B8;">2. Data Stores</h4>
+                <p><strong>inventory.json:</strong> Stocks (420), burn rate (60/d), safety stock (100), in-transit POs</p>
+                <p><strong>suppliers.json:</strong> Global catalog, freight options (air/ground), landed costs, reliability ratings</p>
+            </div>
+            <!-- 3. Scouting Agents -->
+            <div class="arch-card" style="border-left: 4px solid #0284C7;">
+                <h4 style="color: #38BDF8;">3. Scouting Agents</h4>
+                <p><strong>Monitoring Agent:</strong> Computes stock runway (6.08 days). Flags CRITICAL_STOCKOUT_RISK.</p>
+                <p><strong>Demand Agent:</strong> Projects stockout on Day 6. Calculates 785-unit deficit.</p>
+                <p><strong>Supplier Agent:</strong> Scans alternate vendors, calculates landed costs & lead times.</p>
+            </div>
+            <!-- 4. Critic Loop -->
+            <div class="arch-card" style="border-left: 4px solid #EF4444; background-color: #18181B;">
+                <h4 style="color: #F87171;">4. Closed-Loop Negotiation</h4>
+                <p><strong>Planner (Attempt 1):</strong> Proposes 100% Express Air ($23,128.00)</p>
+                <p><strong>Critic Audit:</strong> ❌ REJECTED (Exceeds budget cap by +$8,628)</p>
+                <p style="background: #450A0A; padding: 4px; border-radius: 4px; color: #FCA5A5; font-size: 0.75rem;">
+                    Directive: Rebalance into Dual-Source Split-Batch
+                </p>
+                <p><strong>Planner (Attempt 2):</strong> Proposes Emergency Air + Standard Ground ($14,478.50)</p>
+                <p><strong>Critic Audit:</strong> ✅ APPROVED (Within budget & Day 1 delivery)</p>
+            </div>
+            <!-- 5. Output -->
+            <div class="arch-card" style="border-left: 4px solid #10B981; background-color: #064E3B;">
+                <h4 style="color: #34D399;">5. Execution Output</h4>
+                <p><strong>Batch 1 (Emergency):</strong> 345 units from Apex USA via Overnight Air (Day 1)</p>
+                <p><strong>Batch 2 (Balance):</strong> 187 units from Pacific Taiwan via Air Express (Day 4)</p>
+                <p><strong>Financial Impact:</strong> $14,478.50 ($21.50 under budget)</p>
+                <p><strong>Operational Result:</strong> Zero downtime guaranteed</p>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)

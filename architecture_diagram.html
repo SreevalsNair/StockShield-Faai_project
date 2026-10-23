@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>StockShield System Architecture</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
+  body {
+    background: #0F172A;
+    color: #F8FAFC;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .canvas {
+    width: 1400px;
+    background: #1E293B;
+    border-radius: 16px;
+    padding: 36px 44px;
+    border: 1px solid #334155;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #334155;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+  }
+  .header h1 { font-size: 28px; font-weight: 800; color: #38BDF8; letter-spacing: -0.5px; }
+  .header p { font-size: 14px; color: #94A3B8; margin-top: 4px; }
+  .badge { background: #0369A1; color: #E0F2FE; font-weight: 700; font-size: 13px; padding: 6px 14px; border-radius: 999px; text-transform: uppercase; }
+
+  .pipeline {
+    display: grid;
+    grid-template-columns: 240px 40px 240px 40px 420px 40px 240px;
+    align-items: center;
+  }
+
+  .col-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94A3B8;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .card {
+    background: #0F172A;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1.5px solid #334155;
+    margin-bottom: 14px;
+    transition: transform 0.2s;
+  }
+  .card:hover { transform: translateY(-2px); }
+
+  .card.trigger { border-color: #F59E0B; }
+  .card.trigger h3 { color: #FBBF24; font-size: 15px; font-weight: 700; }
+
+  .card.agent { border-color: #38BDF8; }
+  .card.agent h3 { color: #38BDF8; font-size: 16px; font-weight: 700; }
+
+  .card.critic { border-color: #EF4444; background: #1C1917; }
+  .card.critic h3 { color: #F87171; font-size: 16px; font-weight: 700; }
+
+  .card.resolution { border-color: #10B981; background: #064E3B; }
+  .card.resolution h3 { color: #34D399; font-size: 16px; font-weight: 800; }
+
+  .card p { font-size: 13px; color: #CBD5E1; margin-top: 6px; line-height: 1.4; }
+  .card ul { margin-left: 18px; margin-top: 6px; font-size: 12.5px; color: #94A3B8; }
+  .card li { margin-bottom: 4px; }
+
+  .arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 26px;
+    color: #64748B;
+    font-weight: 900;
+  }
+
+  /* Closed Loop Box */
+  .loop-box {
+    border: 2px dashed #0284C7;
+    background: rgba(2, 132, 199, 0.05);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .loop-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: #38BDF8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .feedback-arrow {
+    background: #450A0A;
+    border: 1px solid #EF4444;
+    color: #FCA5A5;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-top: 8px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="canvas">
+  <div class="header">
+    <div>
+      <h1>StockShield System Architecture</h1>
+      <p>Autonomous Multi-Agent Supply-Chain Disruption Mitigation & Constraint Validation Engine</p>
+    </div>
+    <div class="badge">Landscape Architecture View</div>
+  </div>
+
+  <div class="pipeline">
+
+    <!-- Column 1: Disruption Triggers -->
+    <div>
+      <div class="col-title">1. Disruption Events</div>
+      <div class="card trigger">
+        <h3>⚠️ Supplier Delay</h3>
+        <p>Primary shipment delayed (+11 days). ETA pushed from Day 5 to Day 16.</p>
+      </div>
+      <div class="card trigger">
+        <h3>📈 Demand Surge</h3>
+        <p>Production spike (+15%). Burn rate increases to 69 units/day.</p>
+      </div>
+      <div class="card trigger">
+        <h3>💰 Budget Policy</h3>
+        <p>Enforced hard ceiling: Max $14,500 emergency spend.</p>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow">➔</div>
+
+    <!-- Column 2: Data & Detection -->
+    <div>
+      <div class="col-title">2. Telemetry & Deficit</div>
+      <div class="card agent">
+        <h3>🔍 Monitoring Agent</h3>
+        <p>Audits stock runway.</p>
+        <ul>
+          <li>Current: 420 units</li>
+          <li>Burn: 69/day</li>
+          <li>Stockout: <strong>Day 6</strong></li>
+        </ul>
+      </div>
+      <div class="card agent">
+        <h3>📊 Demand Agent</h3>
+        <p>Computes missing volume.</p>
+        <ul>
+          <li>Supply Gap: 10 days</li>
+          <li>Safety Buffer: 100 units</li>
+          <li>Deficit: <strong>785 units</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow">➔</div>
+
+    <!-- Column 3: Closed-Loop Negotiation -->
+    <div>
+      <div class="col-title">3. Multi-Agent Negotiation & Critic Loop</div>
+      
+      <div class="card agent" style="margin-bottom: 12px;">
+        <h3>🌐 Supplier Research Agent</h3>
+        <p>Scans alternate global catalog. Computes Landed Cost = Base + Freight.</p>
+        <ul>
+          <li><strong>Apex Depot (USA):</strong> 1-day Air @ $29.50 (On-Time)</li>
+          <li><strong>Pacific Micro (Taiwan):</strong> 4-day Air @ $23.00 (On-Time)</li>
+        </ul>
+      </div>
+
+      <div class="loop-box">
+        <div class="loop-title">
+          <span>Adversarial Feedback Cycle</span>
+          <span>orchestrator.py</span>
+        </div>
+
+        <div class="card agent" style="margin-bottom: 8px;">
+          <h3>📋 Recovery Planner</h3>
+          <p><strong>Attempt 1:</strong> 100% Express Solo ($23,128)</p>
+          <p><strong>Attempt 2:</strong> Dual-Source Split-Batch ($14,478)</p>
+        </div>
+
+        <div class="card critic" style="margin-bottom: 8px;">
+          <h3>⚖️ Critic Agent (Auditor)</h3>
+          <p><strong>Audit 1:</strong> ❌ REJECT (+$8,628 over $14.5k cap)</p>
+          <p><strong>Audit 2:</strong> ✅ APPROVED (Within budget & Day 1 delivery)</p>
+        </div>
+
+        <div class="feedback-arrow">
+          ↺ Rejection Directive: Rebalance to Emergency Air + Ground Balance
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow">➔</div>
+
+    <!-- Column 4: Final Resolution -->
+    <div>
+      <div class="col-title">4. Approved Purchase Order</div>
+      <div class="card resolution">
+        <h3>✅ Authorized Recovery Plan</h3>
+        <p><strong>Batch 1 (Emergency Air):</strong><br>
+        345 units from Apex Depot [USA] via Overnight Air (Arrives Day 1).</p>
+        <p style="margin-top: 8px;"><strong>Batch 2 (Standard Balance):</strong><br>
+        187 units from Pacific Micro [Taiwan] via Air Express (Arrives Day 4).</p>
+        <p style="margin-top: 8px; font-weight: 700; color: #A7F3D0;">
+        Total Spend: $14,478.50<br>
+        Stockout: Zero (0 days)
+        </p>
+      </div>
+
+      <div class="card" style="border-color: #6366F1;">
+        <h3 style="color: #A5B4FC; font-size: 15px;">🖥️ Streamlit Cockpit</h3>
+        <p>• Live trace accordions<br>• Plotly runout trajectory<br>• CSV PO download</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
