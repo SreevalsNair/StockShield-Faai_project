@@ -32,26 +32,30 @@ st.markdown("""
         color: #64748B;
         margin-bottom: 1.5rem;
     }
-    .agent-card {
-        padding: 1.1rem;
-        border-radius: 8px;
-        background-color: #F8FAFC;
-        border-left: 5px solid #0284C7;
-        margin-bottom: 1rem;
-    }
     .approved-card {
         padding: 1.2rem;
         border-radius: 8px;
         background-color: #ECFDF5;
         border-left: 5px solid #10B981;
         margin-top: 1rem;
+        margin-bottom: 1rem;
     }
-    .critic-rejection {
-        padding: 0.9rem;
-        border-radius: 6px;
+    .rejected-card {
+        padding: 1.2rem;
+        border-radius: 8px;
         background-color: #FEF2F2;
-        border-left: 4px solid #EF4444;
-        margin: 0.6rem 0;
+        border-left: 5px solid #EF4444;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+    .vendor-badge {
+        display: inline-block;
+        padding: 0.25rem 0.6rem;
+        background-color: #E0F2FE;
+        color: #0369A1;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.85rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -105,12 +109,34 @@ with st.sidebar:
         help="Maximum allowable emergency expenditure enforced by Critic Agent"
     )
 
+    st.markdown("---")
+    st.markdown("### 🎯 **Replenishment Strategy Mode**")
+    strategy_mode_selection = st.radio(
+        "Select Operating Mode:",
+        [
+            "🤖 Auto (Closed-Loop Critic Cycle)",
+            "⚖️ Dual-Source Split-Batch (Balanced)",
+            "⚡ Express Solo (Speed-First)",
+            "💰 Economy Standard (Cost-First)"
+        ],
+        index=0,
+        help="Choose whether agents negotiate autonomously or simulate a specific strategy."
+    )
+
+    mode_map = {
+        "🤖 Auto (Closed-Loop Critic Cycle)": "AUTO",
+        "⚖️ Dual-Source Split-Batch (Balanced)": "SPLIT_BATCH_BALANCED",
+        "⚡ Express Solo (Speed-First)": "EXPRESS_SOLO",
+        "💰 Economy Standard (Cost-First)": "ECONOMY_SINGLE"
+    }
+    selected_mode = mode_map[strategy_mode_selection]
+
     run_sim = st.button("🚀 Run Multi-Agent Recovery", type="primary", use_container_width=True)
 
 # ----------------- HEADER & STATUS -----------------
 st.markdown('<div class="main-title">🛡️ StockShield: Multi-Agent Supply-Chain Defense</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="sub-title">Autonomous shortage detection, alternative sourcing, cost optimization & Critic validation</div>',
+    '<div class="sub-title">Autonomous shortage detection, multi-tier sourcing transparency & Critic validation</div>',
     unsafe_allow_html=True
 )
 
@@ -129,25 +155,32 @@ col4.metric(
 st.markdown("---")
 
 # ----------------- SIMULATION & AGENT FLOW -----------------
-if run_sim or "sim_result" not in st.session_state or st.session_state.get("last_sku") != selected_sku:
+session_key = f"{selected_sku}_{simulated_delay}_{budget_cap}_{demand_surge}_{selected_mode}"
+
+if run_sim or "sim_result" not in st.session_state or st.session_state.get("session_key") != session_key:
     with st.spinner("Multi-Agent Swarm coordinating recovery plan..."):
         sim_result = orchestrator.run_simulation(
             sku=selected_sku,
             delay_days=simulated_delay,
             budget_cap=budget_cap,
-            demand_surge_pct=demand_surge
+            demand_surge_pct=demand_surge,
+            strategy_mode=selected_mode
         )
         st.session_state["sim_result"] = sim_result
-        st.session_state["last_sku"] = selected_sku
+        st.session_state["session_key"] = session_key
 else:
     sim_result = st.session_state["sim_result"]
 
 # ----------------- DASHBOARD LAYOUT -----------------
-tab1, tab2, tab3 = st.tabs(["🤖 Multi-Agent Execution Trace", "📈 Inventory Trajectory Chart", "📦 Final Purchase Order"])
+tab1, tab2, tab3 = st.tabs([
+    "🤖 Multi-Agent Execution Trace", 
+    "📈 Inventory Trajectory Chart", 
+    "📦 Final Purchase Order & Vendor Details"
+])
 
 with tab1:
     st.markdown("### **Autonomous Agent Decision-Making Log**")
-    st.caption("Observe step-by-step reasoning, tool outputs, and the Critic's rejection-revision cycle:")
+    st.caption("Inspect real-time reasoning, supplier selection transparency, and the Critic's rejection/approval gate:")
 
     for step in sim_result["trace"]:
         stage_name = step["stage"]
@@ -155,6 +188,7 @@ with tab1:
         status = step["status"]
         summary = step["summary"]
         thought_log = step["thought_log"]
+        step_data = step.get("data", {})
 
         # Color coding for status pills
         if "CRITICAL" in status or "REJECTED" in status:
@@ -166,6 +200,96 @@ with tab1:
 
         with st.expander(f"**{stage_name}** — Status: :{pill_color}[{status}]", expanded=True):
             st.markdown(f"**Action Summary:** {summary}")
+
+            # Specific Rich Display for Supplier Research Agent
+            if "Supplier Research" in stage_name and "options" in step_data:
+                st.markdown("##### 🌐 Supplier Catalog Evaluation Matrix:")
+                sup_df = pd.DataFrame(step_data["options"])
+                if not sup_df.empty:
+                    display_sup = sup_df[[
+                        "supplier_name", "location", "freight_mode", 
+                        "lead_time_days", "base_unit_cost", "freight_per_unit", 
+                        "landed_unit_cost", "meets_deadline", "reliability"
+                    ]].rename(columns={
+                        "supplier_name": "Supplier",
+                        "location": "Origin",
+                        "freight_mode": "Logistics Mode",
+                        "lead_time_days": "Lead Time (Days)",
+                        "base_unit_cost": "Base Price ($)",
+                        "freight_per_unit": "Freight ($)",
+                        "landed_unit_cost": "Landed Unit Cost ($)",
+                        "meets_deadline": "On-Time?",
+                        "reliability": "Reliability"
+                    })
+                    display_sup["Reliability"] = display_sup["Reliability"].apply(lambda x: f"{x*100:.0f}%")
+                    display_sup["On-Time?"] = display_sup["On-Time?"].apply(lambda x: "✅ Yes" if x else "❌ Exceeds Deadline")
+                    st.dataframe(display_sup, use_container_width=True)
+
+            # Specific Rich Display for Recovery Planning Agent
+            if "Recovery Planning" in stage_name:
+                # 1. Candidate Strategy Comparison
+                if "candidate_strategies" in step_data:
+                    st.markdown("##### 📊 Sourcing Strategy Comparison (Evaluated by Planner):")
+                    strat_df = pd.DataFrame(step_data["candidate_strategies"])
+                    display_strat = strat_df[[
+                        "name", "supplier", "freight", "units", "lead_time", "total_cost"
+                    ]].rename(columns={
+                        "name": "Strategy",
+                        "supplier": "Target Suppliers & Origin",
+                        "freight": "Freight Route",
+                        "units": "Allocation",
+                        "lead_time": "Delivery Timeline",
+                        "total_cost": "Est. Total Spend ($)"
+                    })
+                    display_strat["Est. Total Spend ($)"] = display_strat["Est. Total Spend ($)"].apply(lambda x: f"${x:,.2f}")
+                    st.dataframe(display_strat, use_container_width=True)
+
+                # 2. Winning Order Breakdown with Origin & Rationale
+                if "batches" in step_data:
+                    st.markdown("##### 📍 Specific Orders Accepted by Suppliers:")
+                    batch_df = pd.DataFrame(step_data["batches"])
+                    display_b = batch_df[[
+                        "batch_label", "supplier_name", "location", "freight_mode",
+                        "units", "unit_cost", "total_cost", "arrival_day", "selection_rationale"
+                    ]].rename(columns={
+                        "batch_label": "Batch Purpose",
+                        "supplier_name": "Accepting Supplier",
+                        "location": "Country / Origin",
+                        "freight_mode": "Logistics Tier",
+                        "units": "Units Accepted",
+                        "unit_cost": "Landed Unit Price ($)",
+                        "total_cost": "Batch Total ($)",
+                        "arrival_day": "Arrival Day",
+                        "selection_rationale": "Why Supplier Was Awarded Order"
+                    })
+                    display_b["Batch Total ($)"] = display_b["Batch Total ($)"].apply(lambda x: f"${x:,.2f}")
+                    st.dataframe(display_b, use_container_width=True)
+
+            # Specific Rich Display for Critic Agent
+            if "Critic Agent" in stage_name:
+                v_cols = st.columns(3)
+                v_cols[0].metric(
+                    "Budget Audit", 
+                    f"${step_data.get('total_cost', 0):,.2f}", 
+                    delta=f"Cap: ${step_data.get('budget_cap', 0):,.2f} ({'-' if step_data.get('cost_variance', 0) <= 0 else '+'}${abs(step_data.get('cost_variance', 0)):,.2f})",
+                    delta_color="normal" if step_data.get("cost_variance", 0) <= 0 else "inverse"
+                )
+                v_cols[1].metric(
+                    "Delivery SLA Audit", 
+                    f"Day {step_data.get('earliest_arrival_days', 0)}", 
+                    delta=f"Stockout: Day {step_data.get('deadline_day', 0)}",
+                    delta_color="normal" if step_data.get("earliest_arrival_days", 999) <= step_data.get("deadline_day", 0) else "inverse"
+                )
+                v_cols[2].metric("Audit Verdict", step_data.get("decision", "PENDING"))
+
+                if step_data.get("decision") == "REJECTED":
+                    st.markdown(f"""
+                    <div class="rejected-card">
+                        <strong>❌ Rejection Directive Issued to Planner:</strong><br/>
+                        {step_data.get('critique')}
+                    </div>
+                    """, unsafe_allow_html=True)
+
             st.markdown("##### Agent Internal Chain-of-Thought:")
             for thought in thought_log:
                 st.markdown(f"- `{thought}`")
@@ -270,36 +394,39 @@ with tab2:
     st.caption("Green curve shows how StockShield's emergency split-batch arrival prevents stock from reaching zero.")
 
 with tab3:
-    st.markdown("### **Validated Purchase Order & Recovery Strategy**")
+    st.markdown("### **Validated Purchase Order & Vendor Details**")
     
     final_plan = sim_result.get("final_plan")
     final_audit = sim_result.get("final_audit")
 
     if final_plan and final_audit:
+        audit_card_class = "approved-card" if final_audit['decision'] == "APPROVED" else "rejected-card"
         st.markdown(f"""
-        <div class="approved-card">
-            <h4>✅ Status: {final_audit['decision']} by Critic Agent</h4>
-            <p><strong>Selected Strategy:</strong> {final_plan['strategy']}</p>
+        <div class="{audit_card_class}">
+            <h4>Audit Status: {final_audit['decision']} by Critic Agent</h4>
+            <p><strong>Selected Replenishment Strategy:</strong> {final_plan['strategy']}</p>
             <p><strong>Total Procurement Cost:</strong> ${final_plan['total_cost']:,.2f} 
-            <em>(Budget Cap: ${final_audit['budget_cap']:,.2f} | Remaining Buffer: ${final_audit['budget_cap'] - final_plan['total_cost']:,.2f})</em></p>
-            <p><strong>Audit Statement:</strong> {final_audit['critique']}</p>
+            <em>(Budget Cap: ${final_audit['budget_cap']:,.2f} | Variance: ${final_audit['cost_variance']:,.2f})</em></p>
+            <p><strong>Critic Audit Statement:</strong> {final_audit['critique']}</p>
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("#### **Allocated Replenishment Batches:**")
+        st.markdown("#### **Detailed Purchase Order Allocation:**")
         batch_df = pd.DataFrame(final_plan["batches"])
-        # Format for clean display
+        
         display_df = batch_df[[
-            "batch_label", "supplier_name", "freight_mode", 
-            "units", "lead_time_days", "unit_cost", "total_cost"
+            "batch_label", "supplier_name", "location", "freight_mode", 
+            "units", "lead_time_days", "unit_cost", "total_cost", "selection_rationale"
         ]].rename(columns={
             "batch_label": "Batch Purpose",
-            "supplier_name": "Supplier",
+            "supplier_name": "Awarded Supplier",
+            "location": "Origin",
             "freight_mode": "Logistics Mode",
-            "units": "Units",
+            "units": "Units Ordered",
             "lead_time_days": "Lead Time (Days)",
             "unit_cost": "Landed Unit Cost ($)",
-            "total_cost": "Total Batch Cost ($)"
+            "total_cost": "Total Batch Cost ($)",
+            "selection_rationale": "Award Rationale"
         })
 
         st.dataframe(display_df, use_container_width=True)

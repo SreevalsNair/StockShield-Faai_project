@@ -48,7 +48,8 @@ class StockShieldOrchestrator:
         delay_days: int,
         budget_cap: float,
         demand_surge_pct: float = 0.0,
-        max_critic_iterations: int = 3
+        max_critic_iterations: int = 3,
+        strategy_mode: str = "AUTO"
     ) -> dict:
         """
         Executes the end-to-end multi-agent recovery workflow.
@@ -103,6 +104,10 @@ class StockShieldOrchestrator:
         final_audit = None
         iteration_history = []
 
+        forced_strategy = None
+        if strategy_mode != "AUTO":
+            forced_strategy = strategy_mode
+
         for attempt in range(1, max_critic_iterations + 1):
             # Recovery Planning Agent crafts or adapts plan
             plan = self.planner_agent.formulate_plan(
@@ -110,7 +115,8 @@ class StockShieldOrchestrator:
                 demand_info=demand_result,
                 supplier_info=supplier_result,
                 critic_feedback=critic_feedback,
-                attempt=attempt
+                attempt=attempt,
+                forced_strategy=forced_strategy
             )
             
             trace.append({
@@ -140,7 +146,7 @@ class StockShieldOrchestrator:
 
             iteration_history.append({"attempt": attempt, "plan": plan, "audit": audit})
 
-            if audit["decision"] == "APPROVED":
+            if audit["decision"] == "APPROVED" or forced_strategy is not None:
                 final_plan = plan
                 final_audit = audit
                 break
@@ -163,11 +169,13 @@ class StockShieldOrchestrator:
             "item_name": item["name"],
             "simulated_delay_days": delay_days,
             "budget_cap": budget_cap,
+            "strategy_mode": strategy_mode,
             "iterations_count": len(iteration_history),
             "trace": trace,
             "iteration_history": iteration_history,
             "final_plan": final_plan,
             "final_audit": final_audit,
             "monitoring_summary": mon_result,
-            "demand_summary": demand_result
+            "demand_summary": demand_result,
+            "supplier_summary": supplier_result
         }
