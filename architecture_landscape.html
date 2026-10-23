@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockShield System Architecture</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: #0F172A;
+      color: #F8FAFC;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .container {
+      width: 1400px;
+      max-width: 98vw;
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #38BDF8;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      color: #94A3B8;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 210px 240px 240px 340px 240px;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .card {
+      background: #0F172A;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #334155;
+    }
+    .card-title.blue { color: #38BDF8; }
+    .card-title.purple { color: #A855F7; }
+    .card-title.cyan { color: #06B6D4; }
+    .card-title.orange { color: #FB923C; }
+    .card-title.green { color: #34D399; }
+
+    .node {
+      background: #1E293B;
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .node b {
+      color: #F1F5F9;
+      display: block;
+      margin-bottom: 3px;
+      font-size: 13px;
+    }
+    .node span {
+      color: #94A3B8;
+    }
+    .db-node {
+      border-style: dashed;
+      background: #162032;
+    }
+    .critic-node {
+      border: 2px solid #EF4444;
+      background: rgba(239, 68, 68, 0.08);
+    }
+    .critic-node b {
+      color: #F87171;
+    }
+    .feedback-box {
+      border: 1px dashed #F87171;
+      background: rgba(239, 68, 68, 0.12);
+      border-radius: 6px;
+      padding: 8px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: #FCA5A5;
+      line-height: 1.35;
+    }
+    .output-node {
+      border: 2px solid #10B981;
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .output-node b {
+      color: #34D399;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .badge-red { background: #991B1B; color: #FEE2E2; }
+    .badge-green { background: #065F46; color: #D1FAE5; }
+    .badge-blue { background: #1E40AF; color: #DBEAFE; }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 22px;
+      padding-top: 14px;
+      border-top: 1px solid #334155;
+      font-size: 12px;
+      color: #64748B;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>StockShield: Multi-Agent Supply-Chain Disruption Architecture</h1>
+      <p>Autonomous Shortage Detection • Multi-Tier Vendor Sourcing • Closed-Loop Critic Validation</p>
+    </div>
+
+    <div class="grid">
+
+      <!-- Column 1: Disruption Ingestion -->
+      <div class="card">
+        <div class="card-title blue">1. Disruption Inputs</div>
+        
+        <div class="node">
+          <b>⚠️ Primary Supplier Delay</b>
+          <span>Incoming PO scheduled for Day 5 delayed to Day 16 (+11 days).</span>
+        </div>
+
+        <div class="node">
+          <b>📈 Demand Surge Injection</b>
+          <span>Factory consumption surges by +15% (60 → 69 units/day).</span>
+        </div>
+
+        <div class="node">
+          <b>💰 Policy Constraint</b>
+          <span>Max Emergency Contingency Budget Cap: $14,500.</span>
+        </div>
+      </div>
+
+      <!-- Column 2: Data & Knowledge Stores -->
+      <div class="card">
+        <div class="card-title purple">2. Data Layer</div>
+        
+        <div class="node db-node">
+          <b>📦 data/inventory.json</b>
+          <span>• SKU: MCU-STM32-H7<br/>• Stock: 420 units<br/>• Safety Buffer: 100 units<br/>• Burn: 60 units/day</span>
+        </div>
+
+        <div class="node db-node">
+          <b>🌐 data/suppliers.json</b>
+          <span>• Primary & Alternate Vendors<br/>• Taiwan, USA, Germany<br/>• Overnight Air / Ground / Sea<br/>• Landed Freight Quotes</span>
+        </div>
+      </div>
+
+      <!-- Column 3: Analysis & Sourcing -->
+      <div class="card">
+        <div class="card-title cyan">3. Analysis & Scouting</div>
+
+        <div class="node">
+          <b>🔍 1. Monitoring Agent</b>
+          <span>Runway: 420/69 = 6.08 days.<br/>Delivery: Day 16 > Day 6.</span>
+          <div class="badge badge-red">CRITICAL STOCKOUT RISK</div>
+        </div>
+
+        <div class="node">
+          <b>📊 2. Demand Agent</b>
+          <span>Computes 10-day shutdown gap.<br/>Calculates net bridge deficit.</span>
+          <div class="badge badge-blue">DEFICIT: 785 UNITS</div>
+        </div>
+
+        <div class="node">
+          <b>🌐 3. Supplier Agent</b>
+          <span>Scans multi-tier options:<br/>• Apex Air (USA): 1d, $29.50<br/>• Pacific Air (TW): 4d, $23.00</span>
+        </div>
+      </div>
+
+      <!-- Column 4: Negotiation & Critic Loop -->
+      <div class="card">
+        <div class="card-title orange">4. Closed-Loop Negotiation</div>
+
+        <div class="node">
+          <b>📋 4. Recovery Planning Agent</b>
+          <span><b>Attempt 1 (Speed-First):</b><br/>100% Express Air = $23,128.00</span>
+        </div>
+
+        <div class="node critic-node">
+          <b>⚖️ 5. Critic Agent (Audit #1)</b>
+          <span>SLA Check: Day 1 ≤ Day 6 (Pass)<br/>Budget: $23,128 > $14,500</span>
+          <div class="badge badge-red">REJECTED: OVER BUDGET</div>
+        </div>
+
+        <div class="feedback-box">
+          🔄 <b>Closed-Loop Directive:</b> "Restructure into Split-Batch to compress costs below $14,500."
+        </div>
+
+        <div class="node" style="margin-top: 8px;">
+          <b>📋 Planner Adaptation (Attempt 2)</b>
+          <span>• Batch 1 (Bridge): 345 units Air ($10.1k)<br/>• Batch 2 (Balance): 187 units Std ($4.3k)<br/>Total: <b>$14,478.50</b></span>
+        </div>
+      </div>
+
+      <!-- Column 5: Output & Execution -->
+      <div class="card">
+        <div class="card-title green">5. Final Execution</div>
+
+        <div class="node output-node">
+          <b>✅ Final Authorized PO</b>
+          <span>Critic Decision: <b>APPROVED</b><br/>All constraints satisfied.</span>
+        </div>
+
+        <div class="node">
+          <b>📍 Awarded Suppliers:</b>
+          <span>1. Apex Depot [USA]: 345 units (ETA Day 1)<br/>2. Pacific Micro [TW]: 187 units (ETA Day 4)</span>
+        </div>
+
+        <div class="node">
+          <b>🎯 Business Outcome:</b>
+          <span>• Zero Stockout Days<br/>• Budget Savings: $8,649.50<br/>• Continuous Production</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      <span>StockShield Multi-Agent Framework • Course: FAAI CA-3</span>
+      <span>Orchestrator: stockshield/orchestrator.py • Streamlit Dashboard: stockshield/app.py</span>
+    </div>
+  </div>
+
+</body>
+</html>
